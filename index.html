@@ -258,40 +258,33 @@
       padding: 20px;
     }
 
+    /* Modal Container */
     .modal-card {
       background: white;
       width: 100%;
-      max-width: 800px; /* Melebarkan pop-up dari 500px ke 800px */
+      max-width: 850px;
       border-radius: var(--radius);
       overflow: hidden;
       max-height: 90vh;
       display: flex;
       flex-direction: column;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
     }
 
-    .modal-header {
-      padding: 16px 20px;
-      border-bottom: 1px solid var(--border-color);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    /* Layout 2 Kolom untuk Modal Body */
     .modal-body {
       padding: 24px;
       overflow-y: auto;
       display: grid;
-      grid-template-columns: 1fr 1fr; /* Membagi 2 kolom sama besar */
+      grid-template-columns: 1fr 1fr;
       gap: 24px;
       align-items: start;
     }
 
-    /* Kolom Kiri: Gambar */
-    .modal-img-container {
+    /* Container Gambar & Slider */
+    .modal-img-wrapper {
+      position: relative;
       width: 100%;
-      height: 350px;
+      height: 380px;
       background-color: #f8fafc;
       border-radius: var(--radius);
       border: 1px solid var(--border-color);
@@ -301,59 +294,61 @@
       justify-content: center;
     }
 
-    .modal-img-container img {
+    /* Fitur Hover Zoom */
+    .modal-img-wrapper img {
       width: 100%;
       height: 100%;
       object-fit: contain;
       padding: 10px;
+      transition: transform 0.3s ease;
+      cursor: zoom-in;
     }
 
-    /* Kolom Kanan: Detail & Informasi */
-    .modal-info {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+    .modal-img-wrapper:hover img {
+      transform: scale(2); /* Zoom 2x lipat saat kursor di atas gambar */
     }
 
-    .modal-info h3 { font-size: 1.3rem; }
-    .modal-info .price { font-size: 1.25rem; font-weight: bold; color: var(--primary-color); }
-
-    .btn-close {
-      background: none;
-      border: none;
-      font-size: 1.2rem;
-      cursor: pointer;
-      color: var(--text-muted);
-    }
-
-    .btn-wa {
-      background-color: #25D366;
+    /* Tombol Slide Kanan & Kiri */
+    .slide-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(15, 23, 42, 0.6);
       color: white;
-      padding: 12px;
-      border-radius: var(--radius);
-      text-decoration: none;
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      font-weight: 600;
-      margin-top: 12px;
+      font-size: 1rem;
       transition: background 0.2s;
+      z-index: 10;
     }
 
-    .btn-wa:hover {
-      background-color: #1eb956;
+    .slide-btn:hover {
+      background: rgba(15, 23, 42, 0.9);
     }
 
-    /* Responsif untuk Layar HP (Kembali jadi 1 kolom di HP) */
+    .slide-btn.prev { left: 10px; }
+    .slide-btn.next { right: 10px; }
+
+    /* Indicator Titik/Slide Count */
+    .slide-counter {
+      position: absolute;
+      bottom: 10px;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      font-size: 0.75rem;
+      padding: 3px 10px;
+      border-radius: 12px;
+    }
+
     @media (max-width: 640px) {
-      .modal-body {
-        grid-template-columns: 1fr;
-        gap: 16px;
-      }
-      .modal-img-container {
-        height: 250px;
-      }
+      .modal-body { grid-template-columns: 1fr; }
+      .modal-img-wrapper { height: 280px; }
     }
   </style>
 </head>
@@ -393,12 +388,15 @@
       </div>
       <div class="modal-body">
         
-        <!-- KOLOM KIRI: Gambar Produk -->
-        <div class="modal-img-container" id="mImgContainer">
+        <!-- KOLOM KIRI: Slider Gambar & Zoom -->
+        <div class="modal-img-wrapper" id="mImgWrapper" onmousemove="zoomImage(event)" onmouseleave="resetZoom()">
+          <button class="slide-btn prev" id="prevBtn" onclick="changeSlide(-1)"><i class="fa-solid fa-chevron-left"></i></button>
           <img id="mImg" src="" alt="Gambar Produk">
+          <button class="slide-btn next" id="nextBtn" onclick="changeSlide(1)"><i class="fa-solid fa-chevron-right"></i></button>
+          <span class="slide-counter" id="slideCounter">1/1</span>
         </div>
 
-        <!-- KOLOM KANAN: Detail & Pesan -->
+        <!-- KOLOM KANAN: Informasi & Pesan -->
         <div class="modal-info">
           <h3 id="mTitle">Nama Produk</h3>
           <div class="price" id="mPrice">Rp 0</div>
@@ -421,9 +419,9 @@
   <script>
     // Data Katalog (Integrasi dari Tabel Excel yang dibuat sebelumnya)
     const products = [
-      { id: 1, brand: "Mamachi", name: "PJMA Premium", price: "S: 150K/2Set | M-XL: 175K/2Set", variants: "Roarr, Galaxy, Friends, Pinky, Lovely Blue, Whale, Pooh, Foxy, Tom & Jerry, Sheep, Evore", size: "S (1-2y), M (2-3y), L (4-5y), XL (6-8y)", img: "images/mamachi/pjma-premium1.jpeg" },
-      { id: 2, brand: "Mamachi", name: "Ricy Set", price: "150K / 2 Set (Satuan 85K)", variants: "Tomato, Pasta, Limon, Bana, Espresso, Tiramisu, Slow", size: "S (1-3y), M (3-4y), L (4-5y), XL (5-6y)", img: "images/mamachi/ricy-set1.jpeg" },
-      { id: 3, brand: "Mamachi", name: "Joey Set", price: "139K / 2 Set (Satuan 75K)", variants: "Lilac, Green, Mustard, Sarden, Timun, Salem", size: "S (1-3y), M (3-4y), L (4-5y), XL (5-6y)", img: "images/mamachi/joey-set1.jpeg" },
+      { id: 1, brand: "Mamachi", name: "PJMA Premium", price: "S: 150K/2Set | M-XL: 175K/2Set", variants: "Roarr, Galaxy, Friends, Pinky, Lovely Blue, Whale, Pooh, Foxy, Tom & Jerry, Sheep, Evore", size: "S (1-2y), M (2-3y), L (4-5y), XL (6-8y)", img: [ "images/mamachi/pjma-premium1.jpeg", "images/mamachi/pjma-premium2.jpeg", "images/mamachi/pjma-premium3.jpeg"  ] },
+      { id: 2, brand: "Mamachi", name: "Ricy Set", price: "150K / 2 Set (Satuan 85K)", variants: "Tomato, Pasta, Limon, Bana, Espresso, Tiramisu, Slow", size: "S (1-3y), M (3-4y), L (4-5y), XL (5-6y)", img: [ "images/mamachi/ricy-set1.jpeg", "images/mamachi/ricy-set2.jpeg" ] },
+      { id: 3, brand: "Mamachi", name: "Joey Set", price: "139K / 2 Set (Satuan 75K)", variants: "Lilac, Green, Mustard, Sarden, Timun, Salem", size: "S (1-3y), M (3-4y), L (4-5y), XL (5-6y)", img: [ "images/mamachi/joey-set1.jpeg", "images/mamachi/joey-set2.jpeg" ] },
       { id: 4, brand: "Mamachi", name: "Fiore Set", price: "139K / 2 Set (Satuan 75K)", variants: "Black, Rainbow, Tulip, Sofi", size: "S (1-3y), M (3-4y), L (4-5y), XL (5-6y)", img: "images/mamachi/fiore-set.jpeg" },
       { id: 5, brand: "Mamachi", name: "Gili Set", price: "150K / 2 Set (Satuan 80K)", variants: "Choco, Leo, Whity Shark, Mork, Summer Fish", size: "S (1-3y), M (3-4y), L (4-5y), XL (5-6y)", img: "images/mamachi/gili-set.jpeg" },
       { id: 6, brand: "Mamachi", name: "Didi Set", price: "115K / 2 Set (Satuan 59K)", variants: "Navy, Army, Deep Army, Misty, Mustard, Creamy", size: "S (1-2y), M (2-3y), L (3-4y), XL (4-5y)", img: "images/mamachi/didi-set.jpeg" },
@@ -432,32 +430,34 @@
       { id: 9, brand: "Mamachi", name: "Diora Dress", price: "110K / 2 Pcs (Satuan 60K)", variants: "Jasmine, Orange, Pinky", size: "S (1-2y), M (3-4y), L (4-5y)", img: "images/mamachi/diora-dress.jpeg" },
       { id: 10, brand: "Mamachi", name: "Kalea Dress", price: "110K / 2 Pcs", variants: "Laven, Blue, Blush", size: "S (1-2y), M (2-3y), L (4-5y), XL (5-6y)", img: "images/mamachi/kalea-dress.jpeg" },
       { id: 11, brand: "Mamachi", name: "Boxy Top", price: "43K / Pcs", variants: "Blue, White, Pink, Butter, Tosca, Dinosaurs Rule, Casa Lawa, New York Hub", size: "S (1-3y), M (3-4y), L (4-5y), XL (5-6y)", img: "images/mamachi/boxy-top.jpeg" },
-      { id: 12, brand: "Mamachi", name: "Cozy Tee", price: "100K / 3 Pcs", variants: "Red Spidy, Shingan, Mario, Pokemon, Black Cars, Luffy, Huntrix, Dance Snoopy, Flo Star", size: "S (2-3y), M (3-4y), L (5-7y), XL (8-12y)", img: "images/mamachi/cozy-tee1.jpeg" },
+      { id: 12, brand: "Mamachi", name: "Cozy Tee", price: "100K / 3 Pcs", variants: "Red Spidy, Shingan, Mario, Pokemon, Black Cars, Luffy, Huntrix, Dance Snoopy, Flo Star", size: "S (2-3y), M (3-4y), L (5-7y), XL (8-12y)", img: [ "images/mamachi/cozy-tee1.jpeg", "images/mamachi/cozy-tee2.jpeg", "images/mamachi/cozy-tee3.jpeg" ] },
       { id: 13, brand: "Mamachi", name: "Haya Top", price: "100K / 3 Pcs (Satuan 49K)", variants: "Blue, Green, Red", size: "S (1-2y), M (2-3y), L (3-4y), XL (5-6y)", img: "images/mamachi/haya-top.jpeg" },
       { id: 14, brand: "Mamachi", name: "Baba Pants", price: "100K / 3 Pcs (Satuan 59K)", variants: "Choco, Stone, Black, Navy, Army, Mocca, Light", size: "S (1-3y), M (3-4y), L (4-5y), XL (5-6y)", img: "images/mamachi/baba-pants.jpeg" }
     ];
 
+    // Variables untuk Slider
+    let currentImgList = [];
+    let currentImgIndex = 0;
+
     const phoneNumber = "6281234567890"; // Ganti nomor WhatsApp kamu di sini (Gunakan kode 62)
 
+    // Render Produk di Card Depan (Ambil Gambar Pertama)
     function renderProducts(items) {
       const grid = document.getElementById('productGrid');
       const countLabel = document.getElementById('productCount');
       grid.innerHTML = '';
-
       countLabel.innerText = `Menampilkan ${items.length} produk katalog`;
 
-      if (items.length === 0) {
-        grid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding: 40px; color: var(--text-muted);">Produk tidak ditemukan.</div>`;
-        return;
-      }
-
       items.forEach(p => {
+        // Ambil gambar pertama jika p.img berupa Array
+        const firstImg = Array.isArray(p.img) ? p.img[0] : p.img;
+
         const card = document.createElement('div');
         card.className = 'product-card';
         card.innerHTML = `
           <div class="image-placeholder">
             <span class="brand-badge">${p.brand}</span>
-            ${p.img ? `<img src="${p.img}" alt="${p.name}">` : `<i class="fa-regular fa-image fa-2x"></i><span>Gambar Produk</span>`}
+            ${firstImg ? `<img src="${firstImg}" alt="${p.name}">` : `<i class="fa-regular fa-image fa-2x"></i>`}
           </div>
           <div class="card-body">
             <div class="product-title">${p.name}</div>
@@ -472,19 +472,7 @@
       });
     }
 
-    function filterProducts() {
-      const search = document.getElementById('searchInput').value.toLowerCase();
-      const brand = document.getElementById('brandFilter').value;
-
-      const filtered = products.filter(p => {
-        const matchesSearch = p.name.toLowerCase().includes(search) || p.variants.toLowerCase().includes(search);
-        const matchesBrand = (brand === 'ALL') || (p.brand === brand);
-        return matchesSearch && matchesBrand;
-      });
-
-      renderProducts(filtered);
-    }
-
+    // Modal & Logika Slider
     function openModal(id) {
       const p = products.find(prod => prod.id === id);
       if (!p) return;
@@ -495,30 +483,62 @@
       document.getElementById('mVariants').innerText = p.variants;
       document.getElementById('mSize').innerText = p.size;
 
-      // Update Gambar di Modal
-      const imgContainer = document.getElementById('mImgContainer');
-      const imgElem = document.getElementById('mImg');
-      
-      if (p.img) {
-        imgElem.src = p.img;
-        imgContainer.style.display = 'flex';
-      } else {
-        imgContainer.style.display = 'none';
-      }
+      // Set Array Gambar
+      currentImgList = Array.isArray(p.img) ? p.img : [p.img];
+      currentImgIndex = 0;
+      updateSlideDisplay();
 
-      // Link Pesan WhatsApp
+      // WhatsApp Button
       const textMessage = `Halo Kak, aku mau titip pesan produk ini:%0A- *Brand:* ${p.brand}%0A- *Produk:* ${p.name}%0A- *Harga:* ${p.price}`;
       document.getElementById('waBtn').href = `https://wa.me/${phoneNumber}?text=${textMessage}`;
 
       document.getElementById('productModal').style.display = 'flex';
     }
 
-    function closeModal() {
-      document.getElementById('productModal').style.display = 'none';
+    function updateSlideDisplay() {
+      const imgElem = document.getElementById('mImg');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const counter = document.getElementById('slideCounter');
+
+      imgElem.src = currentImgList[currentImgIndex];
+      counter.innerText = `${currentImgIndex + 1} / ${currentImgList.length}`;
+
+      // Sembunyikan tombol navigasi jika hanya ada 1 gambar
+      if (currentImgList.length <= 1) {
+        prevBtn.style.display = 'none';
+        nextBtn.style.display = 'none';
+        counter.style.display = 'none';
+      } else {
+        prevBtn.style.display = 'flex';
+        nextBtn.style.display = 'flex';
+        counter.style.display = 'block';
+      }
     }
 
-    // Inisialisasi awal
-    renderProducts(products);
+    function changeSlide(direction) {
+      currentImgIndex += direction;
+      if (currentImgIndex < 0) {
+        currentImgIndex = currentImgList.length - 1;
+      } else if (currentImgIndex >= currentImgList.length) {
+        currentImgIndex = 0;
+      }
+      updateSlideDisplay();
+    }
+
+    // Interactive Dynamic Zoom Function
+    function zoomImage(e) {
+      const img = document.getElementById('mImg');
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      img.style.transformOrigin = `${x}% ${y}%`;
+    }
+
+    function resetZoom() {
+      const img = document.getElementById('mImg');
+      img.style.transformOrigin = 'center center';
+    }
   </script>
 </body>
 </html>
