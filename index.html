@@ -261,12 +261,13 @@
     .modal-card {
       background: white;
       width: 100%;
-      max-width: 500px;
+      max-width: 800px; /* Melebarkan pop-up dari 500px ke 800px */
       border-radius: var(--radius);
       overflow: hidden;
       max-height: 90vh;
       display: flex;
       flex-direction: column;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     }
 
     .modal-header {
@@ -277,16 +278,45 @@
       align-items: center;
     }
 
+    /* Layout 2 Kolom untuk Modal Body */
     .modal-body {
-      padding: 20px;
+      padding: 24px;
       overflow-y: auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr; /* Membagi 2 kolom sama besar */
+      gap: 24px;
+      align-items: start;
+    }
+
+    /* Kolom Kiri: Gambar */
+    .modal-img-container {
+      width: 100%;
+      height: 350px;
+      background-color: #f8fafc;
+      border-radius: var(--radius);
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-img-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      padding: 10px;
+    }
+
+    /* Kolom Kanan: Detail & Informasi */
+    .modal-info {
       display: flex;
       flex-direction: column;
       gap: 12px;
     }
 
-    .modal-body h3 { font-size: 1.2rem; }
-    .modal-body .price { font-size: 1.2rem; font-weight: bold; color: var(--primary-color); }
+    .modal-info h3 { font-size: 1.3rem; }
+    .modal-info .price { font-size: 1.25rem; font-weight: bold; color: var(--primary-color); }
 
     .btn-close {
       background: none;
@@ -307,7 +337,23 @@
       justify-content: center;
       gap: 8px;
       font-weight: 600;
-      margin-top: 10px;
+      margin-top: 12px;
+      transition: background 0.2s;
+    }
+
+    .btn-wa:hover {
+      background-color: #1eb956;
+    }
+
+    /* Responsif untuk Layar HP (Kembali jadi 1 kolom di HP) */
+    @media (max-width: 640px) {
+      .modal-body {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      .modal-img-container {
+        height: 250px;
+      }
     }
   </style>
 </head>
@@ -346,21 +392,28 @@
         <button class="btn-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <div class="modal-body">
-        <!-- Display Gambar di Modal Detail -->
+        
+        <!-- KOLOM KIRI: Gambar Produk -->
         <div class="modal-img-container" id="mImgContainer">
           <img id="mImg" src="" alt="Gambar Produk">
         </div>
 
-        <h3 id="mTitle">Nama Produk</h3>
-        <div class="price" id="mPrice">Rp 0</div>
-        <p><strong>Varian Warna/Motif:</strong></p>
-        <p id="mVariants" style="color: var(--text-muted);"></p>
-        <p><strong>Size / Ukuran:</strong></p>
-        <p id="mSize" style="color: var(--text-muted);"></p>
-        
-        <a href="#" id="waBtn" target="_blank" class="btn-wa">
-          <i class="fa-brands fa-whatsapp"></i> Titip Pesan via WhatsApp
-        </a>
+        <!-- KOLOM KANAN: Detail & Pesan -->
+        <div class="modal-info">
+          <h3 id="mTitle">Nama Produk</h3>
+          <div class="price" id="mPrice">Rp 0</div>
+          
+          <p><strong>Varian Warna/Motif:</strong></p>
+          <p id="mVariants" style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5;"></p>
+          
+          <p><strong>Size / Ukuran:</strong></p>
+          <p id="mSize" style="color: var(--text-muted); font-size: 0.9rem;"></p>
+          
+          <a href="#" id="waBtn" target="_blank" class="btn-wa">
+            <i class="fa-brands fa-whatsapp"></i> Titip Pesan via WhatsApp
+          </a>
+        </div>
+
       </div>
     </div>
   </div>
