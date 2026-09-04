@@ -1,1 +1,435 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Katalog Jastip Online</title>
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    :root {
+      --primary-color: #0d9488;
+      --primary-hover: #0f766e;
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --radius: 12px;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    }
 
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      padding-bottom: 60px;
+    }
+
+    /* Header & Navigation */
+    header {
+      background: #ffffff;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo-area h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+
+    /* Controls (Search & Filter) */
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 200px;
+      position: relative;
+    }
+
+    .search-box i {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 10px 14px 10px 40px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      outline: none;
+      font-size: 0.9rem;
+    }
+
+    .filter-select {
+      padding: 10px 14px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      outline: none;
+      background-color: white;
+      font-size: 0.9rem;
+      color: var(--text-main);
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 1200px;
+      margin: 24px auto;
+      padding: 0 20px;
+    }
+
+    .section-title {
+      font-size: 1.1rem;
+      margin-bottom: 16px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* Grid Produk */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    /* Card Produk */
+    .product-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .product-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    .image-placeholder {
+      width: 100%;
+      height: 220px;
+      background-color: #f1f5f9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      gap: 8px;
+      position: relative;
+    }
+
+    .image-placeholder img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .brand-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      backdrop-filter: blur(4px);
+    }
+
+    .card-body {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .product-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .product-price {
+      color: var(--primary-color);
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .product-variants {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .btn-detail {
+      margin-top: auto;
+      width: 100%;
+      padding: 10px;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background 0.2s;
+    }
+
+    .btn-detail:hover {
+      background-color: var(--primary-hover);
+    }
+
+    /* Modal Detail Produk */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal-card {
+      background: white;
+      width: 100%;
+      max-width: 500px;
+      border-radius: var(--radius);
+      overflow: hidden;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-body {
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .modal-body h3 { font-size: 1.2rem; }
+    .modal-body .price { font-size: 1.2rem; font-weight: bold; color: var(--primary-color); }
+
+    .btn-close {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: var(--text-muted);
+    }
+
+    .btn-wa {
+      background-color: #25D366;
+      color: white;
+      padding: 12px;
+      border-radius: var(--radius);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-weight: 600;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-container">
+      <div class="logo-area">
+        <h1><i class="fa-solid fa-bag-shopping"></i> Jastip Katalog</h1>
+      </div>
+      <div class="controls">
+        <div class="search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="searchInput" placeholder="Cari nama set, dress, varian..." onkeyup="filterProducts()">
+        </div>
+        <select id="brandFilter" class="filter-select" onchange="filterProducts()">
+          <option value="ALL">Semua Brand</option>
+          <option value="Mamachi">Mamachi</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="section-title" id="productCount">Menampilkan Produk Katalog</div>
+    <div class="product-grid" id="productGrid">
+      <!-- Data produk akan dimuat oleh JavaScript -->
+    </div>
+  </div>
+
+  <!-- Modal Detail -->
+  <div class="modal-overlay" id="productModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h4 id="mBrand">Brand Name</h4>
+        <button class="btn-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <h3 id="mTitle">Nama Produk</h3>
+        <div class="price" id="mPrice">Rp 0</div>
+        <p><strong>Varian Warna/Motif:</strong></p>
+        <p id="mVariants" style="color: var(--text-muted);"></p>
+        <p><strong>Size / Ukuran:</strong></p>
+        <p id="mSize" style="color: var(--text-muted);"></p>
+        
+        <a href="#" id="waBtn" target="_blank" class="btn-wa">
+          <i class="fa-brands fa-whatsapp"></i> Titip Pesan via WhatsApp
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Data Katalog (Integrasi dari Tabel Excel yang dibuat sebelumnya)
+    const products = [
+      { id: 1, brand: "Mamachi", name: "PJMA Premium", price: "S: 150K/2Set | M-XL: 175K/2Set", variants: "Roarr, Galaxy, Friends, Pinky, Lovely Blue, Whale, Pooh, Foxy, Tom & Jerry, Sheep, Evore", size: "S (1-2y), M (2-3y), L (4-5y), XL (6-8y)", img: "" },
+      { id: 2, brand: "Mamachi", name: "Ricy Set", price: "150K / 2 Set (Satuan 85K)", variants: "Tomato, Pasta, Limon, Bana, Espresso, Tiramisu, Slow", size: "S (1-3y), M (3-4y), L (4-5y), XL (5-6y)", img: "" },
+      { id: 3, brand: "Mamachi", name: "Joey Set", price: "139K / 2 Set (Satuan 75K)", variants: "Lilac, Green, Mustard, Sarden, Timun, Salem", size: "S (1-3y), M (3-4y), L (4-5y), XL (5-6y)", img: "" },
+      { id: 4, brand: "Mamachi", name: "Fiore Set", price: "139K / 2 Set (Satuan 75K)", variants: "Black, Rainbow, Tulip, Sofi", size: "S (1-3y), M (3-4y), L (4-5y), XL (5-6y)", img: "" },
+      { id: 5, brand: "Mamachi", name: "Gili Set", price: "150K / 2 Set (Satuan 80K)", variants: "Choco, Leo, Whity Shark, Mork, Summer Fish", size: "S (1-3y), M (3-4y), L (4-5y), XL (5-6y)", img: "" },
+      { id: 6, brand: "Mamachi", name: "Didi Set", price: "115K / 2 Set (Satuan 59K)", variants: "Navy, Army, Deep Army, Misty, Mustard, Creamy", size: "S (1-2y), M (2-3y), L (3-4y), XL (4-5y)", img: "" },
+      { id: 7, brand: "Mamachi", name: "Bono Set", price: "139K / 2 Set (Satuan 75K)", variants: "Mocca, Grey, Latte, Stripe", size: "S (1-2y), M (3-4y), L (4-5y), XL (5-6y)", img: "" },
+      { id: 8, brand: "Mamachi", name: "Jiny Dress", price: "S-M: 100K/3Pcs | L-XL: 110K/3Pcs", variants: "Blue, Rainbow, Green", size: "S (1-2y), M (2-3y), L (3-4y), XL (4-5y)", img: "" },
+      { id: 9, brand: "Mamachi", name: "Diora Dress", price: "110K / 2 Pcs (Satuan 60K)", variants: "Jasmine, Orange, Pinky", size: "S (1-2y), M (3-4y), L (4-5y)", img: "" },
+      { id: 10, brand: "Mamachi", name: "Kalea Dress", price: "110K / 2 Pcs", variants: "Laven, Blue, Blush", size: "S (1-2y), M (2-3y), L (4-5y), XL (5-6y)", img: "" },
+      { id: 11, brand: "Mamachi", name: "Boxy Top", price: "43K / Pcs", variants: "Blue, White, Pink, Butter, Tosca, Dinosaurs Rule, Casa Lawa, New York Hub", size: "S (1-3y), M (3-4y), L (4-5y), XL (5-6y)", img: "" },
+      { id: 12, brand: "Mamachi", name: "Cozy Tee", price: "100K / 3 Pcs", variants: "Red Spidy, Shingan, Mario, Pokemon, Black Cars, Luffy, Huntrix, Dance Snoopy, Flo Star", size: "S (2-3y), M (3-4y), L (5-7y), XL (8-12y)", img: "" },
+      { id: 13, brand: "Mamachi", name: "Haya Top", price: "100K / 3 Pcs (Satuan 49K)", variants: "Blue, Green, Red", size: "S (1-2y), M (2-3y), L (3-4y), XL (5-6y)", img: "" },
+      { id: 14, brand: "Mamachi", name: "Baba Pants", price: "100K / 3 Pcs (Satuan 59K)", variants: "Choco, Stone, Black, Navy, Army, Mocca, Light", size: "S (1-3y), M (3-4y), L (4-5y), XL (5-6y)", img: "" }
+    ];
+
+    const phoneNumber = "6281234567890"; // Ganti nomor WhatsApp kamu di sini (Gunakan kode 62)
+
+    function renderProducts(items) {
+      const grid = document.getElementById('productGrid');
+      const countLabel = document.getElementById('productCount');
+      grid.innerHTML = '';
+
+      countLabel.innerText = `Menampilkan ${items.length} produk katalog`;
+
+      if (items.length === 0) {
+        grid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding: 40px; color: var(--text-muted);">Produk tidak ditemukan.</div>`;
+        return;
+      }
+
+      items.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.innerHTML = `
+          <div class="image-placeholder">
+            <span class="brand-badge">${p.brand}</span>
+            ${p.img ? `<img src="${p.img}" alt="${p.name}">` : `<i class="fa-regular fa-image fa-2x"></i><span>Gambar Produk</span>`}
+          </div>
+          <div class="card-body">
+            <div class="product-title">${p.name}</div>
+            <div class="product-price">${p.price}</div>
+            <div class="product-variants"><strong>Varian:</strong> ${p.variants}</div>
+            <button class="btn-detail" onclick="openModal(${p.id})">
+              <i class="fa-solid fa-eye"></i> Detail Produk
+            </button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function filterProducts() {
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      const brand = document.getElementById('brandFilter').value;
+
+      const filtered = products.filter(p => {
+        const matchesSearch = p.name.toLowerCase().includes(search) || p.variants.toLowerCase().includes(search);
+        const matchesBrand = (brand === 'ALL') || (p.brand === brand);
+        return matchesSearch && matchesBrand;
+      });
+
+      renderProducts(filtered);
+    }
+
+    function openModal(id) {
+      const p = products.find(prod => prod.id === id);
+      if (!p) return;
+
+      document.getElementById('mBrand').innerText = p.brand;
+      document.getElementById('mTitle').innerText = p.name;
+      document.getElementById('mPrice').innerText = p.price;
+      document.getElementById('mVariants').innerText = p.variants;
+      document.getElementById('mSize').innerText = p.size;
+
+      // Link Pesan WhatsApp
+      const textMessage = `Halo Kak, aku mau titip pesan produk ini:%0A- *Brand:* ${p.brand}%0A- *Produk:* ${p.name}%0A- *Harga:* ${p.price}`;
+      document.getElementById('waBtn').href = `https://wa.me/${phoneNumber}?text=${textMessage}`;
+
+      document.getElementById('productModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('productModal').style.display = 'none';
+    }
+
+    // Inisialisasi awal
+    renderProducts(products);
+  </script>
+</body>
+</html>
